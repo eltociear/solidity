@@ -10,6 +10,7 @@ Compiler Features:
  * Code Generator: More efficient overflow checks for multiplication.
  * Yul Optimizer: Simplify the starting offset of zero-length operations to zero.
  * Language Server: Analyze all files in a project by default (can be customized by setting ``'file-load-strategy'`` to ``'directly-opened-and-on-import'`` in LSP settings object).
+ * Language Server: Implements finding all references as well as semantic highlighting of symbols.
 
 
 Bugfixes:
