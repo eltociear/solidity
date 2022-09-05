@@ -1,5 +1,18 @@
 [
     {
+        "uid": "SOL-2022-7",
+        "name": "StorageWriteRemovalBeforeConditionalTermination",
+        "summary": "Calling Yul functions that conditionally terminate the external EVM call using ``return(...)`` or ``stop()`` may result in incorrect removals of storage writes.",
+        "description": "A call to a Yul function that conditionally terminates the external EVM call did not correctly mark all prior changes to storage as *used*, which may result in storage writes being incorrectly removed. This used to happen in cases in which it would have been valid to remove the store, if the Yul function in question never actually terminated, and the control flow always returned back to the caller. Conditional termination within the same Yul block was not affected. In Solidity with via-IR code generation, any state change before a function conditionally calling ``return(...)`` or ``stop()`` in inline assembly, may have been incorrectly removed, whenever it would have been valid to remove the change without the ``return(...)`` or ``stop()``. In legacy code generation, only inline assembly that did not refer to any Solidity variables and that involved conditionally-terminating user-defined assembly functions could be affected.",
+        "link": "https://blog.soliditylang.org/2022/09/08/storage-write-removal-before-conditional-termination/",
+        "introduced": "0.8.13",
+        "fixed": "0.8.17",
+        "severity": "medium/high",
+        "conditions": {
+            "yulOptimizer": true
+        }
+    },
+    {
         "uid": "SOL-2022-6",
         "name": "AbiReencodingHeadOverflowWithStaticArrayCleanup",
         "summary": "ABI-encoding a tuple with a statically-sized calldata array in the last component would corrupt 32 leading bytes of its first dynamically encoded component.",
