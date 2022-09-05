@@ -1,11 +1,14 @@
 {
     function conditionallyStop() {
         if calldataload(0) { leave }
+        returnEmpty()
+    }
+    function returnEmpty() {
         return(0, 0)
     }
     let x := 0
     let y := 1
-    sstore(x, y) // used to be removed due to the StorageWriteRemovalBeforeConditionalTermination
+    sstore(x, y) // used to be removed due to a bug
     conditionallyStop()
     sstore(x, y)
 }
@@ -23,6 +26,8 @@
 //     function conditionallyStop()
 //     {
 //         if calldataload(0) { leave }
-//         return(0, 0)
+//         returnEmpty()
 //     }
+//     function returnEmpty()
+//     { return(0, 0) }
 // }

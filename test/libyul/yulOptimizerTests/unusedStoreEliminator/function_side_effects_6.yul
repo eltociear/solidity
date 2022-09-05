@@ -5,9 +5,9 @@
     }
     let x := 0
     let y := 1
-    sstore(x, y) // used to be removed due to the StorageWriteRemovalBeforeConditionalTermination
+    sstore(x, y) // used to be removed due to the to the StorageWriteRemovalBeforeConditionalTermination bug
     conditionallyStop()
-    sstore(x, y)
+    revert(0,0)
 }
 // ----
 // step: unusedStoreEliminator
@@ -15,10 +15,9 @@
 // {
 //     {
 //         let x := 0
-//         let y := 1
-//         sstore(x, y)
+//         sstore(x, 1)
 //         conditionallyStop()
-//         sstore(x, y)
+//         revert(0, 0)
 //     }
 //     function conditionallyStop()
 //     {
