@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <variant>
 
 using namespace std;
 using namespace solidity;
@@ -30,7 +31,7 @@ using namespace solidity::langutil;
 SourceReferenceExtractor::Message SourceReferenceExtractor::extract(
 	CharStreamProvider const& _charStreamProvider,
 	util::Exception const& _exception,
-	Error::Type _type
+	std::variant<Error::Type, Error::Severity> _typeOrSeverity
 )
 {
 	SourceLocation const* location = boost::get_error_info<errinfo_sourceLocation>(_exception);
@@ -44,7 +45,7 @@ SourceReferenceExtractor::Message SourceReferenceExtractor::extract(
 		for (auto const& info: secondaryLocation->infos)
 			secondary.emplace_back(extract(_charStreamProvider, &info.second, info.first));
 
-	return Message{std::move(primary), _type, std::move(secondary), nullopt};
+	return Message{std::move(primary), _typeOrSeverity, std::move(secondary), nullopt};
 }
 
 SourceReferenceExtractor::Message SourceReferenceExtractor::extract(
@@ -52,7 +53,18 @@ SourceReferenceExtractor::Message SourceReferenceExtractor::extract(
 	Error const& _error
 )
 {
-	Message message = extract(_charStreamProvider, _error, _error.type());
+	Message message = extract(_charStreamProvider, _error);
+	message.errorId = _error.errorId();
+	return message;
+}
+
+SourceReferenceExtractor::Message SourceReferenceExtractor::extract(
+	CharStreamProvider const& _charStreamProvider,
+	Error::Severity _severity,
+	Error const& _error
+)
+{
+	Message message = extract(_charStreamProvider, _error, _severity);
 	message.errorId = _error.errorId();
 	return message;
 }

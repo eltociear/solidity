@@ -24,6 +24,7 @@
 #include <string>
 #include <tuple>
 #include <vector>
+#include <variant>
 
 namespace solidity::langutil
 {
@@ -55,13 +56,18 @@ namespace SourceReferenceExtractor
 	struct Message
 	{
 		SourceReference primary;
-		Error::Type type;
+		std::variant<Error::Type, Error::Severity> _typeOrSeverity;
 		std::vector<SourceReference> secondary;
 		std::optional<ErrorId> errorId;
 	};
 
-	Message extract(CharStreamProvider const& _charStreamProvider, util::Exception const& _exception, Error::Type _type);
+	Message extract(
+		CharStreamProvider const& _charStreamProvider,
+		util::Exception const& _exception,
+		std::variant<Error::Type, Error::Severity> _typeOrSeverity
+	);
 	Message extract(CharStreamProvider const& _charStreamProvider, Error const& _error);
+	Message extract(CharStreamProvider const& _charStreamProvider, Error::Severity _severity, Error const& _error);
 	SourceReference extract(CharStreamProvider const& _charStreamProvider, SourceLocation const* _location, std::string message = "");
 }
 
